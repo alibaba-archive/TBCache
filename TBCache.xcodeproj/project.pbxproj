@@ -14,6 +14,8 @@
 		EB72486A1B71F331001DCE24 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB7248691B71F331001DCE24 /* Images.xcassets */; };
 		EB72486D1B71F331001DCE24 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = EB72486B1B71F331001DCE24 /* LaunchScreen.xib */; };
 		EB7248791B71F331001DCE24 /* TBCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7248781B71F331001DCE24 /* TBCacheTests.m */; };
+		EB7248871B71F340001DCE24 /* TBDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7248841B71F340001DCE24 /* TBDiskCache.m */; };
+		EB7248881B71F340001DCE24 /* TBMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7248861B71F340001DCE24 /* TBMemoryCache.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +42,10 @@
 		EB7248721B71F331001DCE24 /* TBCacheTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TBCacheTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB7248771B71F331001DCE24 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EB7248781B71F331001DCE24 /* TBCacheTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBCacheTests.m; sourceTree = "<group>"; };
+		EB7248831B71F340001DCE24 /* TBDiskCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBDiskCache.h; sourceTree = "<group>"; };
+		EB7248841B71F340001DCE24 /* TBDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBDiskCache.m; sourceTree = "<group>"; };
+		EB7248851B71F340001DCE24 /* TBMemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBMemoryCache.h; sourceTree = "<group>"; };
+		EB7248861B71F340001DCE24 /* TBMemoryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBMemoryCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +87,7 @@
 		EB72485B1B71F331001DCE24 /* TBCache */ = {
 			isa = PBXGroup;
 			children = (
+				EB7248821B71F340001DCE24 /* TBCache */,
 				EB7248601B71F331001DCE24 /* AppDelegate.h */,
 				EB7248611B71F331001DCE24 /* AppDelegate.m */,
 				EB7248631B71F331001DCE24 /* ViewController.h */,
@@ -117,6 +124,17 @@
 				EB7248771B71F331001DCE24 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EB7248821B71F340001DCE24 /* TBCache */ = {
+			isa = PBXGroup;
+			children = (
+				EB7248831B71F340001DCE24 /* TBDiskCache.h */,
+				EB7248841B71F340001DCE24 /* TBDiskCache.m */,
+				EB7248851B71F340001DCE24 /* TBMemoryCache.h */,
+				EB7248861B71F340001DCE24 /* TBMemoryCache.m */,
+			);
+			path = TBCache;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -220,7 +238,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB7248651B71F331001DCE24 /* ViewController.m in Sources */,
+				EB7248871B71F340001DCE24 /* TBDiskCache.m in Sources */,
 				EB7248621B71F331001DCE24 /* AppDelegate.m in Sources */,
+				EB7248881B71F340001DCE24 /* TBMemoryCache.m in Sources */,
 				EB72485F1B71F331001DCE24 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
