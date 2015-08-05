@@ -16,6 +16,7 @@
 		EB7248791B71F331001DCE24 /* TBCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7248781B71F331001DCE24 /* TBCacheTests.m */; };
 		EB7248871B71F340001DCE24 /* TBDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7248841B71F340001DCE24 /* TBDiskCache.m */; };
 		EB7248881B71F340001DCE24 /* TBMemoryCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EB7248861B71F340001DCE24 /* TBMemoryCache.m */; };
+		EB72488B1B7250A3001DCE24 /* TBCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EB72488A1B7250A3001DCE24 /* TBCache.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,8 @@
 		EB7248841B71F340001DCE24 /* TBDiskCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBDiskCache.m; sourceTree = "<group>"; };
 		EB7248851B71F340001DCE24 /* TBMemoryCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBMemoryCache.h; sourceTree = "<group>"; };
 		EB7248861B71F340001DCE24 /* TBMemoryCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBMemoryCache.m; sourceTree = "<group>"; };
+		EB7248891B7250A3001DCE24 /* TBCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TBCache.h; sourceTree = "<group>"; };
+		EB72488A1B7250A3001DCE24 /* TBCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TBCache.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +132,8 @@
 		EB7248821B71F340001DCE24 /* TBCache */ = {
 			isa = PBXGroup;
 			children = (
+				EB7248891B7250A3001DCE24 /* TBCache.h */,
+				EB72488A1B7250A3001DCE24 /* TBCache.m */,
 				EB7248831B71F340001DCE24 /* TBDiskCache.h */,
 				EB7248841B71F340001DCE24 /* TBDiskCache.m */,
 				EB7248851B71F340001DCE24 /* TBMemoryCache.h */,
@@ -241,6 +246,7 @@
 				EB7248871B71F340001DCE24 /* TBDiskCache.m in Sources */,
 				EB7248621B71F331001DCE24 /* AppDelegate.m in Sources */,
 				EB7248881B71F340001DCE24 /* TBMemoryCache.m in Sources */,
+				EB72488B1B7250A3001DCE24 /* TBCache.m in Sources */,
 				EB72485F1B71F331001DCE24 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,6 +442,7 @@
 				EB72487E1B71F331001DCE24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EB72487F1B71F331001DCE24 /* Build configuration list for PBXNativeTarget "TBCacheTests" */ = {
 			isa = XCConfigurationList;
@@ -444,6 +451,7 @@
 				EB7248811B71F331001DCE24 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
