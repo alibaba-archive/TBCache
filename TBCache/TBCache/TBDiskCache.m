@@ -10,6 +10,7 @@
 #define kTBDiskCacheName    @"TBDiskCache"
 
 #import "TBDiskCache.h"
+#import "TBMemoryCache.h"
 
 @interface TBDiskCache()
 
@@ -100,6 +101,8 @@
     }
 }
 
+- (void)tansferMemoryCacheToDiskCache:(TBMemoryCache *)cache {
+}
 
 #pragma mark - public method
 
@@ -187,7 +190,9 @@
     if (success) {
         NSString *key = [self keyForEncodedFileURL:fileURL];
         if (key) {
-            [_cacheDate setObject:date forKey:key];
+            @synchronized(self){
+                [_cacheDate setObject:date forKey:key];
+            }
         }
     }
     return success;
