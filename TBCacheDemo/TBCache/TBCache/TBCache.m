@@ -50,13 +50,13 @@
 }
 #pragma mark - response method
 - (void)handleMemoryWarning{
-    [self transferMemoryCacheToDisk];
-    [_memoryCache removeAllCacheObjects:nil];
+    NSLog(@"count %d",(int)[_memoryCache cacheCount]);
+    [self transferMemoryCacheToDiskAndClearMemoryCache];
 }
 
 - (void)handleApplicationEnterBackground{
-    [self transferMemoryCacheToDisk];
-    [_memoryCache removeAllCacheObjects:nil];
+    NSLog(@"count %d",(int)[_memoryCache cacheCount]);
+    [self transferMemoryCacheToDiskAndClearMemoryCache];
 }
 
 #pragma mark - public method
@@ -85,9 +85,11 @@
 }
 
 #pragma mark - private method
-- (void)transferMemoryCacheToDisk{
+- (void)transferMemoryCacheToDiskAndClearMemoryCache{
     [_memoryCache enumertateCacheUsingBlock:^(NSString *key, id object, BOOL *stop) {
         [_diskCache setObject:object forKey:key completion:nil];
+    } completion:^(TBMemoryCache *cache) {
+        [_memoryCache removeAllCacheObjects:nil];
     }];
 }
 @end

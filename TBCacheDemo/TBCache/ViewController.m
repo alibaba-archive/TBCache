@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "TBMemoryCache.h"
 #import "TBDiskCache.h"
+#import "TBCache.h"
 
 @interface ViewController ()
 
@@ -32,12 +33,22 @@
 //    NSLog(@"remove all%d",(int)[TBMemoryCache sharedCache].cacheCount);
     
     
-    [[TBDiskCache sharedCache] setObject:objectString
-                                  forKey:keyString
-                              completion:^(TBDiskCache *cache, NSString *key, id<NSCoding> object) {
-//                                  NSLog(@"%@ %@ %@",cache, key, object);
-                              }];
-    [[TBDiskCache sharedCache] objectForKey:keyString completion:^(TBDiskCache *cache, NSString *key, id<NSCoding> object) {
+//    [[TBDiskCache sharedCache] setObject:objectString
+//                                  forKey:keyString
+//                              completion:^(TBDiskCache *cache, NSString *key, id<NSCoding> object) {
+////                                  NSLog(@"%@ %@ %@",cache, key, object);
+//                              }];
+//    [[TBDiskCache sharedCache] objectForKey:keyString completion:^(TBDiskCache *cache, NSString *key, id<NSCoding> object) {
+//        NSLog(@"%@ %@ %@",cache, key, object);
+//    }];
+    
+    [[TBCache sharedCache] setObject:objectString
+                              forKey:keyString
+                          completion:^(TBCache *cache, NSString *key, id<NSCoding> object) {
+                              NSLog(@"%@ %@ %@",cache, key, object);
+                          }];
+    
+    [[TBCache sharedCache] setObject:@"2" forKey:@"key yaya" completion:^(TBCache *cache, NSString *key, id<NSCoding> object) {
         NSLog(@"%@ %@ %@",cache, key, object);
     }];
     

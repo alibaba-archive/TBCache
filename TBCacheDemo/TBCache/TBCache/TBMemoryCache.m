@@ -110,12 +110,15 @@
     }
 }
 
-- (void)enumertateCacheUsingBlock:(void (^) (NSString *key, id object, BOOL *stop))block {
+- (void)enumertateCacheUsingBlock:(void (^) (NSString *key, id object, BOOL *stop))block completion:(TBMemoryCacheBlock)completion{
     if (!block) {
         return;
     }
+    __weak TBMemoryCache *weakSelf = self;
     dispatch_async(_queue, ^{
+        TBMemoryCache *strongSelf = weakSelf;
         [_cacheDictionary enumerateKeysAndObjectsUsingBlock:block];
+        completion(strongSelf);
     });
 }
 #pragma mark - setters and getters
