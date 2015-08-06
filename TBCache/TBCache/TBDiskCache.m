@@ -10,7 +10,6 @@
 #define kTBDiskCacheName    @"TBDiskCache"
 
 #import "TBDiskCache.h"
-#import "TBMemoryCache.h"
 
 @interface TBDiskCache()
 
@@ -99,9 +98,6 @@
         }
         
     }
-}
-
-- (void)tansferMemoryCacheToDiskCache:(TBMemoryCache *)cache {
 }
 
 #pragma mark - public method
@@ -197,6 +193,8 @@
     }
     return success;
 }
+
+
 
 #pragma mark - setters and getters
 

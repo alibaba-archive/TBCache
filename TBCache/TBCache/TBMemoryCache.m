@@ -10,7 +10,6 @@
 #define kTBMemoryCachePrefix @"com.teambition.TBMemoryCache"
 
 #import "TBMemoryCache.h"
-#import <UIKit/UIKit.h>
 
 @interface TBMemoryCache()
 
@@ -42,31 +41,11 @@
         _cacheDate = [[NSMutableDictionary alloc] init];
         _queue = dispatch_queue_create([kTBMemoryCachePrefix UTF8String], DISPATCH_QUEUE_CONCURRENT);
         _expiredTime = 0.0;
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleMemoryWarning)
-                                                     name:UIApplicationDidReceiveMemoryWarningNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(handleApplicationEnterBackground)
-                                                     name:UIApplicationDidEnterBackgroundNotification
-                                                   object:nil];
     }
     return self;
 }
 
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
 
-#pragma mark - response method
-- (void)handleMemoryWarning{
-    [self removeAllCacheObjects:nil];
-}
-
-- (void)handleApplicationEnterBackground{
-    [self removeAllCacheObjects:nil];
-}
 
 #pragma mark - private method
 - (void)removeAllCacheObjects:(TBMemoryCacheBlock)block {
@@ -131,6 +110,14 @@
     }
 }
 
+- (void)enumertateCacheUsingBlock:(void (^) (NSString *key, id object, BOOL *stop))block {
+    if (!block) {
+        return;
+    }
+    dispatch_async(_queue, ^{
+        [_cacheDictionary enumerateKeysAndObjectsUsingBlock:block];
+    });
+}
 #pragma mark - setters and getters
 
 - (NSUInteger)cacheCount {

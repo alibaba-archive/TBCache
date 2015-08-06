@@ -5,7 +5,7 @@
 //  Created by DangGu on 15/8/5.
 //  Copyright (c) 2015年 Teambition. All rights reserved.
 //
-
+#import <UIKit/UIKit.h>
 #import "TBCache.h"
 #import "TBDiskCache.h"
 #import "TBMemoryCache.h"
@@ -30,10 +30,36 @@
     if (self) {
         _diskCache = [TBDiskCache sharedCache];
         _memoryCache = [TBMemoryCache sharedCache];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleMemoryWarning)
+                                                     name:UIApplicationDidReceiveMemoryWarningNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleApplicationEnterBackground)
+                                                     name:UIApplicationDidEnterBackgroundNotification
+                                                   object:nil];
+        
+        
     }
     return self;
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+#pragma mark - response method
+- (void)handleMemoryWarning{
+    [self transferMemoryCacheToDisk];
+    [_memoryCache removeAllCacheObjects:nil];
+}
+
+- (void)handleApplicationEnterBackground{
+    [self transferMemoryCacheToDisk];
+    [_memoryCache removeAllCacheObjects:nil];
+}
+
+#pragma mark - public method
 - (void)objectForKey:(NSString *)key completion:(TBCacheObjectBlock)completion {
     if (!key || !completion) {
         return;
@@ -55,6 +81,13 @@
     [_memoryCache setObject:object forKey:key completion:^(TBMemoryCache *cache, NSString *key, id object) {
         TBCache *strongSelf = weakSelf;
         completion(strongSelf, key, object);
+    }];
+}
+
+#pragma mark - private method
+- (void)transferMemoryCacheToDisk{
+    [_memoryCache enumertateCacheUsingBlock:^(NSString *key, id object, BOOL *stop) {
+        [_diskCache setObject:object forKey:key completion:nil];
     }];
 }
 @end
