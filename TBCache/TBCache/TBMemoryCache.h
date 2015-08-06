@@ -22,6 +22,7 @@ typedef void (^TBMemoryCacheObjectBlock) (TBMemoryCache *cache, NSString *key, i
 
 - (void)objectForKey:(NSString *)key completion:(TBMemoryCacheObjectBlock)completion;
 - (void)setObject:(id)object forKey:(NSString *)key completion:(TBMemoryCacheObjectBlock)completion;
+- (void)enumertateCacheUsingBlock:(void (^) (NSString *key, id object, BOOL *stop))block;
 
 - (void)removeAllCacheObjects:(TBMemoryCacheBlock)block;
 @end
