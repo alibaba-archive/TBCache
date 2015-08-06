@@ -17,4 +17,7 @@ typedef void (^TBCacheObjectBlock) (TBCache *cache, NSString *key, id<NSCoding>o
 @property (nonatomic, strong, readonly) TBMemoryCache *memoryCache;
 
 + (TBCache *)sharedCache;
+
+- (void)objectForKey:(NSString *)key completion:(TBCacheObjectBlock)completion;
+- (void)setObject:(id<NSCoding>)object forKey:(NSString *)key completion:(TBCacheObjectBlock)completion;
 @end
