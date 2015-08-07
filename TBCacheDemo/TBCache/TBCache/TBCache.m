@@ -30,6 +30,7 @@
     if (self) {
         _diskCache = [TBDiskCache sharedCache];
         _memoryCache = [TBMemoryCache sharedCache];
+        _diskCache.memoryCache = _memoryCache;
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleMemoryWarning)
@@ -39,7 +40,10 @@
                                                  selector:@selector(handleApplicationEnterBackground)
                                                      name:UIApplicationDidEnterBackgroundNotification
                                                    object:nil];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleApplicationWillEnterForegounrd)
+                                                     name:UIApplicationWillEnterForegroundNotification
+                                                   object:nil];
         
     }
     return self;
@@ -49,14 +53,16 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 #pragma mark - response method
-- (void)handleMemoryWarning{
-    NSLog(@"count %d",(int)[_memoryCache cacheCount]);
-    [self transferMemoryCacheToDiskAndClearMemoryCache];
+- (void)handleMemoryWarning {
+    [_memoryCache transferMemoryCacheToDiskCache:_diskCache andClearMemoryCache:YES];
 }
 
-- (void)handleApplicationEnterBackground{
-    NSLog(@"count %d",(int)[_memoryCache cacheCount]);
-    [self transferMemoryCacheToDiskAndClearMemoryCache];
+- (void)handleApplicationEnterBackground {
+    [_memoryCache transferMemoryCacheToDiskCache:_diskCache andClearMemoryCache:YES];
+}
+
+- (void)handleApplicationWillEnterForegounrd {
+    [_diskCache transferDiskCacheToMemoryCache:_memoryCache];
 }
 
 #pragma mark - public method
@@ -80,16 +86,18 @@
     __weak TBCache *weakSelf = self;
     [_memoryCache setObject:object forKey:key completion:^(TBMemoryCache *cache, NSString *key, id object) {
         TBCache *strongSelf = weakSelf;
-        completion(strongSelf, key, object);
+        if (completion) {
+            completion(strongSelf, key, object);
+        }
     }];
 }
 
 #pragma mark - private method
-- (void)transferMemoryCacheToDiskAndClearMemoryCache{
-    [_memoryCache enumertateCacheUsingBlock:^(NSString *key, id object, BOOL *stop) {
-        [_diskCache setObject:object forKey:key completion:nil];
-    } completion:^(TBMemoryCache *cache) {
-        [_memoryCache removeAllCacheObjects:nil];
-    }];
+
+#pragma mark - setters and getters
+- (void)setExpiredTime:(NSTimeInterval)expiredTime {
+    _expiredTime = expiredTime;
+    _memoryCache.expiredTime = expiredTime;
+    _diskCache.expiredTime = expiredTime;
 }
 @end

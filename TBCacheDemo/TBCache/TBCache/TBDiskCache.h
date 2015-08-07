@@ -8,13 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-@class TBDiskCache;
+@class TBDiskCache,TBMemoryCache;
 typedef void (^TBDiskCacheBlock) (TBDiskCache *cache);
 typedef void (^TBDiskCacheObjectBlock) (TBDiskCache *cache, NSString *key, id<NSCoding> object);
 
 @interface TBDiskCache : NSObject
 
-@property (nonatomic, strong, readonly) NSURL *cacheURL;
+@property (nonatomic, strong, readonly) NSURL   *cacheURL;
+@property (nonatomic, strong) TBMemoryCache     *memoryCache;
+
+@property (nonatomic, assign) NSTimeInterval    expiredTime;
 
 + (TBDiskCache *)sharedCache;
 
@@ -22,5 +25,5 @@ typedef void (^TBDiskCacheObjectBlock) (TBDiskCache *cache, NSString *key, id<NS
 - (void)objectForKey:(NSString *)key completion:(TBDiskCacheObjectBlock)completion;
 - (void)setObject:(id<NSCoding>)object forKey:(NSString *)key completion:(TBDiskCacheObjectBlock)completion;
 - (void)removeObjectForKey:(NSString *)key completion:(TBDiskCacheObjectBlock)completion;
-
+- (void)transferDiskCacheToMemoryCache:(TBMemoryCache *)memoryCache;
 @end

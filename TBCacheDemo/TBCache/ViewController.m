@@ -42,14 +42,16 @@
 //        NSLog(@"%@ %@ %@",cache, key, object);
 //    }];
     
-    [[TBCache sharedCache] setObject:objectString
-                              forKey:keyString
-                          completion:^(TBCache *cache, NSString *key, id<NSCoding> object) {
-                              NSLog(@"%@ %@ %@",cache, key, object);
-                          }];
+    [[TBCache sharedCache] setObject:objectString forKey:keyString completion:nil];
     
-    [[TBCache sharedCache] setObject:@"2" forKey:@"key yaya" completion:^(TBCache *cache, NSString *key, id<NSCoding> object) {
-        NSLog(@"%@ %@ %@",cache, key, object);
+    [[TBCache sharedCache] setObject:@"2" forKey:@"key yaya" completion:nil];
+    
+    NSLog(@"count :%d",(int)[[[TBCache sharedCache] memoryCache] cacheCount]);
+    
+    [[TBCache sharedCache] setExpiredTime:1];
+    
+    [[TBCache sharedCache] objectForKey:keyString completion:^(TBCache *cache, NSString *key, id<NSCoding> object) {
+        NSLog(@"expired %@ %@ %@",cache, key, object);
     }];
     
     
