@@ -10,6 +10,7 @@
 #define kTBMemoryCachePrefix @"com.teambition.TBMemoryCache"
 
 #import "TBMemoryCache.h"
+#import "TBDiskCache.h"
 
 @interface TBMemoryCache()
 
@@ -45,8 +46,6 @@
     return self;
 }
 
-
-
 #pragma mark - private method
 - (void)removeAllCacheObjects:(TBMemoryCacheBlock)block {
     @synchronized(self){
@@ -66,6 +65,10 @@
 }
 
 - (BOOL)isExpiredForKey:(NSString *)key {
+    if (_expiredTime == 0.0) {
+        return NO;
+    }
+    
     NSDate *creatAt = [_cacheDate objectForKey:key];
     NSTimeInterval interval = [creatAt timeIntervalSinceNow];
     if ((-interval) > _expiredTime) {
@@ -75,21 +78,49 @@
     }
 }
 
+- (void)enumertateCacheUsingBlock:(void (^) (NSString *key, id object, BOOL *stop))block completion:(TBMemoryCacheBlock)completion{
+    if (!block) {
+        return;
+    }
+    __weak TBMemoryCache *weakSelf = self;
+    dispatch_async(_queue, ^{
+        TBMemoryCache *strongSelf = weakSelf;
+        [_cacheDictionary enumerateKeysAndObjectsUsingBlock:block];
+        completion(strongSelf);
+    });
+}
+
 #pragma mark - public method
 - (void)objectForKey:(NSString *)key completion:(TBMemoryCacheObjectBlock)completion {
     if (!key || !completion) {
         return;
     }
     NSDate *now = [NSDate date];
-    id object = [_cacheDictionary objectForKey:key];
-    @synchronized(self){
-        [_cacheDate setObject:now forKey:key];
+    id object = nil;
+    
+    if ([self isExpiredForKey:key]) {
+        object = nil;
+        [self removeObjectForKey:key completion:nil];
+    } else {
+        object = [_cacheDictionary objectForKey:key];
+        @synchronized(self){
+            [_cacheDate setObject:now forKey:key];
+        }
     }
-    completion(self, key, object);
+
+    __weak TBMemoryCache *weakSelf = self;
+    dispatch_async(_queue, ^{
+        TBMemoryCache *strongSelf = weakSelf;
+        if (!strongSelf) {
+            return;
+        }
+        completion(strongSelf, key, object);
+    });
+
 }
 
 - (void)setObject:(id)object forKey:(NSString *)key completion:(TBMemoryCacheObjectBlock)completion {
-    if (!object || !key || !completion) {
+    if (!object || !key) {
         return;
     }
     NSDate *now = [NSDate date];
@@ -110,17 +141,39 @@
     }
 }
 
-- (void)enumertateCacheUsingBlock:(void (^) (NSString *key, id object, BOOL *stop))block completion:(TBMemoryCacheBlock)completion{
-    if (!block) {
+- (void)removeObjectForKey:(NSString *)key completion:(TBMemoryCacheBlock)completion{
+    if (!key) {
         return;
     }
-    __weak TBMemoryCache *weakSelf = self;
-    dispatch_async(_queue, ^{
-        TBMemoryCache *strongSelf = weakSelf;
-        [_cacheDictionary enumerateKeysAndObjectsUsingBlock:block];
-        completion(strongSelf);
-    });
+    @synchronized(self) {
+        [_cacheDictionary removeObjectForKey:key];
+        [_cacheDate removeObjectForKey:key];
+    }
+    if (completion) {
+        __weak TBMemoryCache *weakSelf = self;
+        dispatch_async(_queue, ^{
+            TBMemoryCache *strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+            completion(strongSelf);
+        });
+    }
+    
 }
+
+- (void)transferMemoryCacheToDiskCache:(TBDiskCache *)diskCache andClearMemoryCache:(BOOL)clear{
+    [self enumertateCacheUsingBlock:^(NSString *key, id object, BOOL *stop) {
+        if (object) {
+            [diskCache setObject:object forKey:key completion:nil];
+        }
+    } completion:^(TBMemoryCache *cache) {
+        if (clear) {
+            [self removeAllCacheObjects:nil];
+        }
+    }];
+}
+
 #pragma mark - setters and getters
 
 - (NSUInteger)cacheCount {

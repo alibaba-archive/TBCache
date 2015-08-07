@@ -10,6 +10,7 @@
 #define kTBDiskCacheName    @"TBDiskCache"
 
 #import "TBDiskCache.h"
+#import "TBMemoryCache.h"
 
 @interface TBDiskCache()
 
@@ -97,6 +98,11 @@
             [_cacheDate setObject:modifiedDate forKey:key];
         }
         
+        //transfer DiskCache to MemoryCache
+        if (_memoryCache) {
+            [self transferDiskCacheToMemoryCache:_memoryCache forKey:key];
+        }
+        
     }
 }
 
@@ -119,9 +125,14 @@
         id<NSCoding> object = nil;
         BOOL existed = [[NSFileManager defaultManager] fileExistsAtPath:fileURL.path];
         if (existed) {
-            object = [NSKeyedUnarchiver unarchiveObjectWithFile:fileURL.path];
-            NSDate *now = [NSDate date];
-            [strongSelf setFileModificationDate:now forURL:fileURL];
+            if ([strongSelf isExpiredForKey:key]) {
+                object = nil;
+                [strongSelf removeObjectForKey:key completion:nil];
+            } else {
+                object = [NSKeyedUnarchiver unarchiveObjectWithFile:fileURL.path];
+                NSDate *now = [NSDate date];
+                [strongSelf setFileModificationDate:now forURL:fileURL];
+            }
         }
         completion(strongSelf, key, object);
     });
@@ -172,6 +183,20 @@
     });
 }
 
+- (void)transferDiskCacheToMemoryCache:(TBMemoryCache *)memoryCache {
+    if (!memoryCache) {
+        return;
+    }
+    NSError *error;
+    NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:_cacheURL
+                                                   includingPropertiesForKeys:nil
+                                                                      options:NSDirectoryEnumerationSkipsHiddenFiles error:&error];
+    for (NSURL *fileURL in files) {
+        NSString *key = [self keyForEncodedFileURL:fileURL];
+        [self transferDiskCacheToMemoryCache:memoryCache forKey:key];
+    }
+}
+
 #pragma mark - private method
 - (BOOL)setFileModificationDate:(NSDate *)date forURL:(NSURL *)fileURL
 {
@@ -194,7 +219,27 @@
     return success;
 }
 
+- (BOOL)isExpiredForKey:(NSString *)key {
+    if (_expiredTime == 0.0) {
+        return NO;
+    }
+    
+    NSDate *creatAt = [_cacheDate objectForKey:key];
+    NSTimeInterval interval = [creatAt timeIntervalSinceNow];
+    if ((-interval) > _expiredTime) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
 
+- (void)transferDiskCacheToMemoryCache:(TBMemoryCache *)memoryCache forKey:(NSString *)key{
+    [self objectForKey:key completion:^(TBDiskCache *cache, NSString *key, id<NSCoding> object) {
+        if (object) {
+            [_memoryCache setObject:object forKey:key completion:nil];
+        }
+    }];
+}
 
 #pragma mark - setters and getters
 
